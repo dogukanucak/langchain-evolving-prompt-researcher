@@ -1,0 +1,11 @@
+langgraph
+langchain_openai
+langchain_community
+langchain_core
+langchain_tavily
+tavily-python
+wikipedia
+ipython
+pydantic
+python-dotenv
+scope-optimizer>=0.1.0
