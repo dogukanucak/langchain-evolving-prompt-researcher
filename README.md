@@ -79,11 +79,31 @@ SCOPE_DATA_PATH=./scope_data
 
 ## 🚀 Quick Start
 
-### Basic Usage
+### Two Demo Modes
 
+This project includes **two complementary demos**:
+
+#### 1. Simple Demo - Information Extraction (Recommended for learning)
+```bash
+python simple_demo.py
+```
+
+**Best for:**
+- Understanding SCOPE fundamentals
+- Seeing clear, predictable learning patterns
+- Quick demonstrations (faster iterations)
+- Teaching SCOPE concepts
+
+#### 2. Research Assistant - Multi-Agent Research (Full complexity)
 ```bash
 python main.py
 ```
+
+**Best for:**
+- Real-world application showcase
+- Complex multi-agent scenarios
+- Production-ready examples
+- Comprehensive research tasks
 
 Enter a research topic and watch the assistant:
 1. Generate analyst perspectives
@@ -93,24 +113,60 @@ Enter a research topic and watch the assistant:
 
 Look for `📚 SCOPE learned` messages during execution.
 
-### Demo: See SCOPE's Impact
+### Demo: See SCOPE's Impact Through Iterative Learning
 
-Run the comparison script to see before/after improvements:
+**Two comparison modes available:**
 
+#### Simple Demo Comparison (Recommended First)
 ```bash
-python compare_scope_impact.py
+# Quick test (5 iterations, ~10 minutes)
+python simple_compare.py
+
+# Medium demo (10 iterations, ~20 minutes)
+python simple_compare.py --iterations 10
+
+# Full presentation (15 iterations, ~30 minutes)
+python simple_compare.py --iterations 15
 ```
 
-This will:
-1. **Run 1**: Research a topic with no SCOPE rules (baseline)
-2. Show what SCOPE learned
-3. **Run 2**: Research the same topic with learned rules (optimized)
-4. Compare both final reports side-by-side
+**Why start here:**
+- ✅ Faster iterations (~2 min each)
+- ✅ Clearer learning patterns
+- ✅ More predictable improvements
+- ✅ Perfect for understanding SCOPE
 
-**Expected results:**
-- Run 1: More learning events (4-6)
-- Run 2: Fewer learning events (0-2) = queries already improved!
-- Reports saved to `comparison_outputs/` for detailed comparison
+**Generates:**
+- `comparison_outputs/simple_results_summary.md` - Comparison table
+- `comparison_outputs/simple_prompts/` - Evolved prompts per iteration
+- `comparison_outputs/simple_rules_snapshots/` - Rules evolution
+
+#### Research Demo Comparison (Full Complexity)
+```bash
+# Quick test (3 iterations, ~15 minutes)
+python compare_scope_impact.py
+
+# Medium demo (10 iterations, ~50 minutes)
+python compare_scope_impact.py --iterations 10
+
+# Full presentation (20 iterations, ~2 hours)
+python compare_scope_impact.py --iterations 20
+```
+
+**Why use this:**
+- 🎯 Real-world complexity
+- 🎯 Production scenario
+- 🎯 Impressive results
+- 🎯 Shows SCOPE at scale
+
+**Generates:**
+- `comparison_outputs/results_summary.md` - Research comparison table
+- `comparison_outputs/reports/` - Full research reports
+- `comparison_outputs/rules_snapshots/` - SCOPE rules evolution
+
+**Recommended workflow:**
+1. Start with `simple_compare.py` to show SCOPE fundamentals
+2. Then show `compare_scope_impact.py` for real-world application
+3. Compare both results to highlight SCOPE's versatility
 
 ## 📊 How SCOPE Works
 
@@ -146,31 +202,35 @@ Strategic rules are:
 ## 📁 Project Structure
 
 ```
-evolving-prompt-researcher/
+langchain-evolving-prompt-researcher/
 ├── README.md                    # This file
 ├── requirements.txt             # Python dependencies
 ├── setup.sh                     # Quick setup script
-├── .env.example                 # Environment template
+├── CONTRIBUTING.md              # Contribution guidelines
+├── LICENSE                      # MIT License
 │
-├── main.py                      # Entry point
+├── main.py                      # Research assistant entry point
+├── simple_demo.py               # Simple extraction demo
 ├── graph.py                     # LangGraph workflow definition
-├── nodes.py                     # Node functions (SCOPE integrated here)
+├── nodes.py                     # Node functions (SCOPE integrated)
 ├── prompts.py                   # System prompts
 ├── models.py                    # Pydantic data models
 ├── config.py                    # Configuration loader
 │
-├── compare_scope_impact.py      # Demo script (before/after comparison)
+├── compare_scope_impact.py      # Research iterative comparison
+├── simple_compare.py            # Simple demo iterative comparison
 │
 ├── scope_data/                  # SCOPE learning storage
 │   ├── strategic_memory/        # Persistent strategic rules
 │   │   └── global_rules.json
-│   └── prompt_updates/          # Learning history
-│       ├── search_query_generator_web.jsonl
-│       └── search_query_generator_wikipedia.jsonl
+│   └── prompt_updates/          # Learning history (JSONL)
 │
-└── comparison_outputs/          # Demo comparison reports
-    ├── report_run1_baseline.txt
-    └── report_run2_optimized.txt
+└── comparison_outputs/          # Generated comparison results
+    ├── results_summary.md       # Research demo results
+    ├── simple_results_summary.md # Simple demo results
+    ├── reports/                 # Research reports per iteration
+    ├── simple_prompts/          # Evolved prompts per iteration
+    └── *_rules_snapshots/       # Rules evolution tracking
 ```
 
 ## 🔍 Viewing SCOPE Results
