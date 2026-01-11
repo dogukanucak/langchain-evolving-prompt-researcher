@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 """
-Simple script to demonstrate SCOPE's impact by comparing before/after runs.
+Script to demonstrate SCOPE's impact through iterative learning.
 
-This script runs the research assistant twice with the same topic:
-1. First run: Clean slate (no SCOPE rules)
-2. Second run: With learned rules from first run
+This script runs the research assistant N times with the same topic:
+- Iteration 1: Clean slate (no SCOPE rules)
+- Iterations 2-N: With accumulated learned rules from previous iterations
 
-It captures and compares the search queries generated to show improvement.
+It captures metrics and generates a markdown table for presentation.
 """
 import subprocess
 import json
 import os
+import argparse
+import re
 from pathlib import Path
+from datetime import datetime
 
 
 def clear_scope_data():
@@ -79,6 +82,25 @@ def extract_final_report(output: str):
     return '\n'.join(report_lines).strip()
 
 
+def count_sources_in_report(report: str):
+    """Count number of sources cited in the report."""
+    if not report:
+        return 0
+
+    # Look for common source patterns like [1], [2], etc. or URLs
+    citation_patterns = [
+        r'\[\d+\]',  # [1], [2], etc.
+        r'https?://[^\s\)]+',  # URLs
+    ]
+
+    sources = set()
+    for pattern in citation_patterns:
+        matches = re.findall(pattern, report)
+        sources.update(matches)
+
+    return len(sources)
+
+
 def save_report(report: str, filename: str):
     """Save report to file."""
     output_dir = Path("comparison_outputs")
@@ -101,6 +123,17 @@ def get_strategic_rules():
         return json.load(f)
 
 
+def count_total_rules(rules: dict):
+    """Count total number of strategic rules."""
+    if not rules:
+        return 0
+    total = 0
+    for agent_name, domains in rules.items():
+        for domain, rule_list in domains.items():
+            total += len(rule_list)
+    return total
+
+
 def print_rules_summary(rules: dict):
     """Print a summary of strategic rules."""
     if not rules:
@@ -118,136 +151,226 @@ def print_rules_summary(rules: dict):
                 print(f"      • {rule['rule'][:80]}...")
 
 
+def generate_markdown_table(iterations_data: list):
+    """Generate markdown table from iterations data."""
+    table = "## SCOPE Learning Progress\n\n"
+    table += "| Iteration | Report Length (chars) | Sources Cited | Query Improvements | New Rules Learned | Total Rules | Gemini Score | Grok Score |\n"
+    table += "|-----------|----------------------|---------------|-------------------|-------------------|-------------|--------------|------------|\n"
+
+    for data in iterations_data:
+        table += f"| {data['iteration']} | {data['report_length']:,} | {data['sources_cited']} | {data['query_improvements']} | {data['new_rules']} | {data['total_rules']} | TBD | TBD |\n"
+
+    table += "\n### Notes\n"
+    table += "- **Report Length**: Character count of the final research report\n"
+    table += "- **Sources Cited**: Number of unique sources referenced in the report\n"
+    table += "- **Query Improvements**: Number of SCOPE learning events (fewer = better queries)\n"
+    table += "- **New Rules Learned**: Strategic rules learned in this iteration\n"
+    table += "- **Total Rules**: Cumulative strategic rules across all iterations\n"
+    table += "- **Gemini/Grok Scores**: To be filled after manual evaluation\n"
+
+    return table
+
+
+def save_iteration_data(iterations_data: list, output_dir: Path):
+    """Save iteration data to JSON file."""
+    json_file = output_dir / "iteration_data.json"
+    with open(json_file, 'w') as f:
+        json.dump({
+            'timestamp': datetime.now().isoformat(),
+            'iterations': iterations_data
+        }, f, indent=2)
+    return json_file
+
+
 def main():
+    parser = argparse.ArgumentParser(
+        description='Demonstrate SCOPE impact through iterative learning'
+    )
+    parser.add_argument(
+        '--iterations', '-n',
+        type=int,
+        default=3,
+        help='Number of iterations to run (default: 3, recommended: 5-20 for presentation)'
+    )
+    parser.add_argument(
+        '--topic', '-t',
+        type=str,
+        default=None,
+        help='Research topic (will prompt if not provided)'
+    )
+
+    args = parser.parse_args()
+
+    num_iterations = args.iterations
+    if num_iterations < 2:
+        print("❌ Error: Number of iterations must be at least 2")
+        return
+    if num_iterations > 25:
+        print("⚠️  Warning: Running more than 25 iterations may take a very long time")
+        response = input("Continue anyway? (yes/no): ").strip().lower()
+        if response != 'yes':
+            return
+
     print("\n" + "="*70)
-    print("SCOPE IMPACT DEMONSTRATION")
+    print("SCOPE ITERATIVE LEARNING DEMONSTRATION")
     print("="*70)
-    print("\nThis demo runs the research assistant twice with the same topic:")
-    print("  1. First run: No SCOPE rules (learning from scratch)")
-    print("  2. Second run: With learned rules applied")
-    print("\nCompare the outputs to see how SCOPE improves search queries!\n")
+    print(
+        f"\nThis demo runs the research assistant {num_iterations} times with the same topic:")
+    print("  • Iteration 1: Clean slate (no SCOPE rules)")
+    print(f"  • Iterations 2-{num_iterations}: With accumulated learned rules")
+    print("\nWe'll track improvements across iterations!\n")
 
     # Get topic from user
-    topic = input(
-        "Enter research topic (or press Enter for 'quantum computing basics'): ").strip()
+    topic = args.topic
     if not topic:
-        topic = "quantum computing basics"
+        topic = input(
+            "Enter research topic (or press Enter for 'the healthiest foods to eat'): ").strip()
+        if not topic:
+            topic = "the healthiest foods to eat"
 
-    # RUN 1: Clean slate
+    print(f"\n📋 Research Topic: '{topic}'")
+    print(f"🔄 Iterations: {num_iterations}")
+
+    # Prepare output directory
+    output_dir = Path("comparison_outputs")
+    output_dir.mkdir(exist_ok=True)
+    reports_dir = output_dir / "reports"
+    reports_dir.mkdir(exist_ok=True)
+    rules_dir = output_dir / "rules_snapshots"
+    rules_dir.mkdir(exist_ok=True)
+
+    # Clear SCOPE data for clean start
     print("\n" + "="*70)
-    print("STEP 1: BASELINE RUN (No SCOPE Rules)")
+    print("PREPARING: Clearing SCOPE data for clean baseline")
     print("="*70 + "\n")
     clear_scope_data()
 
-    stdout1, stderr1 = run_research(topic, num_analysts=1, run_label="RUN 1")
+    iterations_data = []
+    previous_rules_count = 0
 
-    scope_messages_1 = extract_scope_messages(stdout1)
-    report_1 = extract_final_report(stdout1)
-    rules_after_1 = get_strategic_rules()
+    # Run iterations
+    for i in range(1, num_iterations + 1):
+        print("\n" + "="*70)
+        print(f"ITERATION {i}/{num_iterations}")
+        if i == 1:
+            print("(Baseline - No SCOPE Rules)")
+        else:
+            print(f"(With {previous_rules_count} accumulated rules)")
+        print("="*70 + "\n")
 
-    print("\n" + "-"*70)
-    print("RUN 1 RESULTS:")
-    print("-"*70)
-    print(f"SCOPE learning events: {len(scope_messages_1)}")
-    for msg in scope_messages_1:
-        print(f"  {msg.strip()}")
+        # Run research
+        stdout, stderr = run_research(
+            topic,
+            num_analysts=1,
+            run_label=f"ITERATION {i}"
+        )
 
-    print("\n📊 Rules learned in Run 1:")
-    print_rules_summary(rules_after_1)
+        # Extract metrics
+        scope_messages = extract_scope_messages(stdout)
+        report = extract_final_report(stdout)
+        rules = get_strategic_rules()
 
-    # Wait for user to continue
+        # Calculate metrics
+        total_rules = count_total_rules(rules)
+        new_rules = total_rules - previous_rules_count
+        report_length = len(report) if report else 0
+        sources_cited = count_sources_in_report(report) if report else 0
+        query_improvements = len(scope_messages)
+
+        # Store iteration data
+        iteration_data = {
+            'iteration': i,
+            'report_length': report_length,
+            'sources_cited': sources_cited,
+            'query_improvements': query_improvements,
+            'new_rules': new_rules,
+            'total_rules': total_rules
+        }
+        iterations_data.append(iteration_data)
+
+        # Save report
+        if report:
+            report_file = reports_dir / f"report_iter_{i}.txt"
+            with open(report_file, 'w') as f:
+                f.write(report)
+
+        # Save rules snapshot
+        if rules:
+            rules_file = rules_dir / f"rules_iter_{i}.json"
+            with open(rules_file, 'w') as f:
+                json.dump(rules, f, indent=2)
+
+        # Print iteration summary
+        print("\n" + "-"*70)
+        print(f"ITERATION {i} SUMMARY:")
+        print("-"*70)
+        print(f"  📝 Report length: {report_length:,} characters")
+        print(f"  📚 Sources cited: {sources_cited}")
+        print(f"  🔍 Query improvement events: {query_improvements}")
+        print(f"  ➕ New rules learned: {new_rules}")
+        print(f"  📊 Total accumulated rules: {total_rules}")
+
+        if i < num_iterations:
+            print(f"\n⏭️  Proceeding to iteration {i+1}...")
+
+        previous_rules_count = total_rules
+
+    # Generate summary
     print("\n" + "="*70)
-    input("Press Enter to continue to Run 2 (with learned rules)...")
-
-    # RUN 2: With learned rules
-    print("\n" + "="*70)
-    print("STEP 2: OPTIMIZED RUN (With SCOPE Rules)")
+    print("GENERATING RESULTS SUMMARY")
     print("="*70 + "\n")
-    print("📚 Applying rules from Run 1...\n")
 
-    stdout2, stderr2 = run_research(topic, num_analysts=1, run_label="RUN 2")
+    # Create markdown table
+    markdown_table = generate_markdown_table(iterations_data)
+    summary_file = output_dir / "results_summary.md"
 
-    scope_messages_2 = extract_scope_messages(stdout2)
-    report_2 = extract_final_report(stdout2)
-    rules_after_2 = get_strategic_rules()
+    with open(summary_file, 'w') as f:
+        f.write(f"# SCOPE Learning Progress Report\n\n")
+        f.write(f"**Research Topic:** {topic}\n\n")
+        f.write(
+            f"**Date:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        f.write(f"**Total Iterations:** {num_iterations}\n\n")
+        f.write("---\n\n")
+        f.write(markdown_table)
+        f.write("\n---\n\n")
+        f.write("## Files Generated\n\n")
+        f.write(
+            f"- Reports: `comparison_outputs/reports/report_iter_[1-{num_iterations}].txt`\n")
+        f.write(
+            f"- Rules Snapshots: `comparison_outputs/rules_snapshots/rules_iter_[1-{num_iterations}].json`\n")
+        f.write(f"- Raw Data: `comparison_outputs/iteration_data.json`\n\n")
+        f.write("## Next Steps\n\n")
+        f.write("1. Review each report in the `reports/` folder\n")
+        f.write("2. Send each report to Gemini and Grok for scoring (1-10)\n")
+        f.write("3. Update the Gemini Score and Grok Score columns in this table\n")
+        f.write("4. Use this table in your LangChain community presentation\n")
 
-    print("\n" + "-"*70)
-    print("RUN 2 RESULTS:")
-    print("-"*70)
-    print(f"SCOPE learning events: {len(scope_messages_2)}")
-    for msg in scope_messages_2:
-        print(f"  {msg.strip()}")
+    # Save JSON data
+    json_file = save_iteration_data(iterations_data, output_dir)
 
-    print("\n📊 Total strategic rules after Run 2:")
-    print_rules_summary(rules_after_2)
-
-    # COMPARISON
-    print("\n" + "="*70)
-    print("COMPARISON: RUN 1 vs RUN 2")
-    print("="*70)
-    print(f"Topic: {topic}")
-    print(f"\nRun 1 (no rules):  {len(scope_messages_1)} learning events")
-    print(f"Run 2 (with rules): {len(scope_messages_2)} learning events")
-
-    if len(scope_messages_2) < len(scope_messages_1):
-        print("\n✅ IMPROVEMENT: Fewer learning events in Run 2")
-        print("   This means queries were already better, thanks to applied rules!")
-    elif len(scope_messages_2) == len(scope_messages_1):
-        print("\n📊 OBSERVATION: Similar learning events")
-        print("   SCOPE may be learning new patterns for this specific topic.")
-
-    print("\n💡 TIP: Fewer learning events = queries already optimized!")
-
-    # Save and display reports
-    print("\n" + "="*70)
-    print("FINAL REPORTS COMPARISON")
-    print("="*70)
-
-    if report_1:
-        report1_file = save_report(report_1, "report_run1_baseline.txt")
-        print(f"\n📄 Run 1 Report saved to: {report1_file}")
-        print("\n" + "-"*70)
-        print("RUN 1 FINAL REPORT (Baseline - No SCOPE Rules):")
-        print("-"*70)
-        print(report_1[:800] + "\n... (truncated, see file for full report)")
-
-    if report_2:
-        report2_file = save_report(report_2, "report_run2_optimized.txt")
-        print(f"\n📄 Run 2 Report saved to: {report2_file}")
-        print("\n" + "-"*70)
-        print("RUN 2 FINAL REPORT (Optimized - With SCOPE Rules):")
-        print("-"*70)
-        print(report_2[:800] + "\n... (truncated, see file for full report)")
+    # Display results
+    print(markdown_table)
 
     print("\n" + "="*70)
-    print("QUALITY ANALYSIS")
+    print("DEMO COMPLETE!")
     print("="*70)
+    print(f"\n✅ Successfully completed {num_iterations} iterations")
+    print(f"\n📊 Results saved to:")
+    print(f"   • Summary table: {summary_file}")
+    print(f"   • Raw data: {json_file}")
+    print(f"   • Reports: {reports_dir}/")
+    print(f"   • Rules: {rules_dir}/")
 
-    if report_1 and report_2:
-        len_diff = len(report_2) - len(report_1)
-        print(f"\nReport 1 length: {len(report_1)} chars")
-        print(f"Report 2 length: {len(report_2)} chars")
-        print(
-            f"Difference: {len_diff:+d} chars ({len_diff/len(report_1)*100:+.1f}%)")
+    print("\n📋 Next steps for presentation:")
+    print("   1. Review reports in comparison_outputs/reports/")
+    print("   2. Send each report to Gemini for scoring")
+    print("   3. Send each report to Grok for scoring")
+    print("   4. Update results_summary.md with scores")
+    print("   5. Use the markdown table in your presentation!")
 
-        print("\n💡 To compare reports in detail:")
-        print(f"   diff comparison_outputs/report_run1_baseline.txt comparison_outputs/report_run2_optimized.txt")
-        print(f"   or open both files side-by-side in your editor")
-
-    print("\n" + "="*70)
-    print("DEMO COMPLETE")
-    print("="*70)
-    print("\n📊 Summary:")
-    print(f"   • Topic: {topic}")
-    print(
-        f"   • Learning improvement: {len(scope_messages_1)} → {len(scope_messages_2)} events")
-    print(f"   • Strategic rules learned: {len(rules_after_2)}")
-    print(f"   • Reports saved to: comparison_outputs/")
-
-    print("\nNext steps:")
-    print("  • Review both reports in comparison_outputs/ folder")
-    print("  • Check strategic rules: cat scope_data/strategic_memory/global_rules.json | python3 -m json.tool")
-    print("  • Run another topic: python compare_scope_impact.py")
+    print(f"\n💡 Tip: To run more iterations, use:")
+    print(f"   python compare_scope_impact.py --iterations 20")
+    print(f"   python compare_scope_impact.py --iterations 10 --topic 'your topic here'")
 
 
 if __name__ == "__main__":
