@@ -39,7 +39,7 @@ chmod +x setup.sh
 
 # Or manually:
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source .venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -341,7 +341,7 @@ ls scope_data/strategic_memory/
 ### Import errors
 
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
