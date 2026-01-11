@@ -2,25 +2,23 @@
 
 A production-ready LangGraph-based research assistant that continuously improves through [SCOPE](https://github.com/JarvisPei/SCOPE) (Self-evolving Context Optimization via Prompt Evolution).
 
-**Phase 1 Status:** 5 learning agents, end-to-end optimization, source quality assessment
-
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
----
+## Overview
 
-## 🎯 What This Demonstrates
+This project demonstrates how AI agents can learn and improve through experience using the SCOPE framework. The system features:
 
-- **End-to-End Learning**: 5 agents learning across the research pipeline (questions, searches, writing, coordination)
-- **Source Quality Assessment**: Automatic academic vs. blog detection with 0-10 scoring
-- **Measurable Improvements**: +31% quality improvement in 5 iterations
-- **Production Ready**: Clean code, comprehensive docs, proven ROI
+- **5 Self-Improving Agents**: Question generation, web search, Wikipedia search, section writing, and research coordination
+- **Source Quality Assessment**: Automatic evaluation of information sources (academic journals, institutional sites, blogs)
+- **Measurable Learning**: Quality improvements tracked across iterations
+- **Production Ready**: Clean architecture, comprehensive documentation, easy setup
 
-**Results after 5 iterations:**
-- 14 strategic rules learned
-- Reports evolved from blog-quality (6.5/10) to research-grade (8.5/10)
-- Source authority improved from 6.25/10 → 8.25/10
-- 367% faster learning rate
+**Proven Results:**
+- +31% quality improvement over 5 iterations (6.5 → 8.5/10)
+- +32% source authority improvement (6.25 → 8.25/10)
+- 14 strategic rules learned automatically
+- Research-grade reports with named studies and precise statistics
 
 ---
 
@@ -39,21 +37,24 @@ chmod +x setup.sh
 
 # Or manually:
 python -m venv venv
-source .venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
 ### 2. Configure API Keys
 
+Create a `.env` file in the project root:
+
 ```bash
-cp .env.example .env
-# Edit .env with your keys
+OPENAI_API_KEY=your_openai_key_here
+TAVILY_API_KEY=your_tavily_key_here
+LANGSMITH_API_KEY=your_langsmith_key_here  # Optional, for tracing
 ```
 
-Required keys:
-- `OPENAI_API_KEY` - [Get here](https://platform.openai.com/api-keys)
-- `TAVILY_API_KEY` - [Get here](https://tavily.com/)
-- `LANGSMITH_API_KEY` - Optional, for tracing
+Get your API keys:
+- **OpenAI**: [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+- **Tavily**: [tavily.com](https://tavily.com/)
+- **LangSmith** (optional): [smith.langchain.com](https://smith.langchain.com/)
 
 ### 3. Run a Demo
 
@@ -121,134 +122,121 @@ See [`docs/SCOPE_ARCHITECTURE.md`](docs/SCOPE_ARCHITECTURE.md) for detailed diag
 
 | Document | Description |
 |----------|-------------|
-| [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) | **Start here** - Complete usage guide |
+| [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) | Complete implementation and usage guide |
 | [`docs/SCOPE_ARCHITECTURE.md`](docs/SCOPE_ARCHITECTURE.md) | Architecture diagram and integration details |
-| [`docs/SOURCE_QUALITY_LEARNING.md`](docs/SOURCE_QUALITY_LEARNING.md) | Source quality assessment feature |
-| [`docs/PHASE1_IMPLEMENTED.md`](docs/PHASE1_IMPLEMENTED.md) | Phase 1 implementation details |
 | [`notebooks/01_prompt_evolution_basics.ipynb`](notebooks/01_prompt_evolution_basics.ipynb) | Interactive tutorial |
 
 ---
 
 ## 🎓 Key Features
 
-### 1. End-to-End Pipeline Learning
+### Self-Improving Agent Pipeline
 
-**5 Learning Agents:**
-- Question generation → Better interviews
-- Web/Wiki search → Better sources
-- Section writing → Better structure
-- Research coordination → Better orchestration
+Five specialized agents that learn from experience:
+- **Question Generation**: Learns to formulate better research questions
+- **Web Search**: Learns to identify high-quality sources
+- **Wikipedia Search**: Learns effective encyclopedia queries
+- **Section Writing**: Learns optimal report structure
+- **Research Coordination**: Learns meta-level orchestration
 
-### 2. Source Quality Assessment
+### Source Quality Assessment
 
-Automatic authority scoring (0-10):
-- **10/10**: Peer-reviewed journals (Nature, PubMed, NIH)
-- **9/10**: Academic institutions (.edu, .gov)
-- **8/10**: Academic publishers (Springer, JSTOR)
-- **7/10**: Wikipedia, reputable news
-- **3/10**: Blogs, personal sites
+Automatic evaluation of information sources (0-10 scale):
+- **10/10**: Peer-reviewed journals (Nature, PubMed, NIH, Science)
+- **9/10**: Academic institutions (.edu, .gov domains)
+- **8/10**: Academic publishers (Springer, JSTOR, IEEE)
+- **7/10**: Wikipedia, established news organizations
+- **3/10**: Blogs, personal websites
 
-**SCOPE learns to prioritize academic sources automatically!**
+SCOPE automatically learns to prioritize authoritative sources.
 
-### 3. Proven Results
+### Measurable Results
 
-After 5 iterations:
-- ✅ +31% quality improvement (6.5 → 8.5/10)
-- ✅ +32% source authority (6.25 → 8.25/10)
-- ✅ 14 strategic rules learned
-- ✅ Named research studies cited (ARIC, etc.)
-- ✅ Precise statistics (16% CVD risk, 31% mortality reduction)
+Documented improvements over 5 iterations:
+- **+31% report quality** (6.5 → 8.5/10)
+- **+32% source authority** (6.25 → 8.25/10)
+- **14 strategic rules** learned automatically
+- **Research-grade output**: Named studies, precise statistics, proper citations
 
 ---
 
-## 💡 Example Usage
+## 💡 Usage Examples
 
-### Quick Demo (Simple Extraction)
+### Simple Extraction Demo
 
 ```bash
 python simple_demo.py
 ```
 
+Example output:
 ```
 📝 Task 1/5
    Instruction: Extract the email address
    Text: Contact John Doe at john.doe@example.com...
-   
    ✓ Output: john.doe@example.com
    
-   📚 SCOPE LEARNED (STRATEGIC):
-      Always validate email format patterns and extract clean addresses...
+   📚 SCOPE LEARNED: Always validate email format patterns...
 
-✅ Completed 5 tasks
-📚 SCOPE learning events: 2
+✅ Completed 5 tasks | 📚 SCOPE learning events: 2
 ```
 
-**Comparison (Simple):**
-```bash
-# Quick test (5 iterations, ~10 min)
-python simple_compare.py
-
-# Full test (10 iterations, ~20 min)
-python simple_compare.py --iterations 10
-```
-
-### Full Research Assistant
+### Research Assistant
 
 ```bash
 python main.py
 ```
 
+Example session:
 ```
 Topic: Best practices for academic writing
 Analysts: 1
 
-# Watch SCOPE learn:
-📚 SCOPE learned (strategic): Include terms like 'peer-reviewed' 
-    for academic topics to boost authority from 5/10 to 9/10
+📚 SCOPE learned: Include terms like 'peer-reviewed' for academic
+    topics to boost source authority (5/10 → 9/10)
 
-📚 SCOPE learned (strategic): When asking about writing techniques, 
-    prompt for comparative examples across disciplines
+📚 SCOPE learned: When asking about writing techniques, prompt for
+    comparative examples across disciplines
 ```
 
-**Comparison (Research):**
+### Comparison Tools
+
+**Simple Comparison** (faster, good for testing):
 ```bash
-# Quick test (5 iterations, ~25 min)
-python compare_scope_impact.py --iterations 5 --topic "healthy foods"
-
-# Full test (10 iterations, ~50 min)
-python compare_scope_impact.py --iterations 10 --topic "healthy foods"
+python simple_compare.py --iterations 5
 ```
 
-**Generates:**
-- `comparison_outputs/results_summary.md` - Progression table
-- `comparison_outputs/reports/` - Reports from each iteration
-- `comparison_outputs/rules_snapshots/` - Rules evolution
+**Research Comparison** (full pipeline):
+```bash
+python compare_scope_impact.py --iterations 10 --topic "your topic"
+```
+
+**Generated outputs:**
+- `comparison_outputs/results_summary.md` - Quality progression
+- `comparison_outputs/reports/` - Full reports per iteration
+- `comparison_outputs/rules_snapshots/` - Rule evolution
 - `comparison_outputs/COMPLETE_REPORT_ANALYSIS.md` - Detailed analysis
 
 ---
 
-## 📈 Performance
+## 📈 Performance Metrics
 
-### Token Economics
+### Token Usage and Cost
 
-| Component | Tokens/Iteration | Cost (GPT-4o-mini) |
-|-----------|-----------------|-------------------|
-| **Phase 0** (baseline) | 13,200 | ~$0.07 |
-| **Phase 1** (current) | 16,800 | ~$0.10 |
-| **Increase** | +27% | +$0.03 |
+| Metric | Value (per iteration) |
+|--------|----------------------|
+| **Tokens** | ~16,800 |
+| **Cost** (GPT-4o-mini) | ~$0.10 |
+| **10 iterations** | ~168,000 tokens, ~$1.00 |
+| **ROI** | 11-14% quality improvement per 1,000 tokens |
 
-**10 iterations:** ~168,000 tokens, ~$1.00
+### Quality Progression
 
-**ROI:** 11-14% quality improvement per 1,000 tokens
-
-### Quality Metrics
-
-| Metric | Baseline | After 5 Iters | After 10 Iters (est.) |
-|--------|----------|---------------|----------------------|
+| Metric | Baseline | 5 Iterations | 10 Iterations (est.) |
+|--------|----------|--------------|---------------------|
 | Report Quality | 6.5/10 | 8.5/10 | 9.0/10 |
 | Source Authority | 6.25/10 | 8.25/10 | 8.5/10 |
-| Rules Learned | 2 | 14 | 20-25 |
-| Named Studies | 0 | 2+ | 5+ |
+| Strategic Rules | 2 | 14 | 20-25 |
+| Research Citations | 0 | 2+ | 5+ |
 
 ---
 
@@ -259,24 +247,23 @@ python compare_scope_impact.py --iterations 10 --topic "healthy foods"
 Edit `config.py`:
 
 ```python
-ENABLE_SCOPE = True  # Set to False to disable
-SCOPE_DATA_PATH = "./scope_data"
+ENABLE_SCOPE = True  # Set to False to disable learning
+SCOPE_DATA_PATH = "./scope_data"  # Directory for learned rules
 ```
 
-### Adjust SCOPE Settings
+### SCOPE Settings
 
-Edit `nodes.py` (lines 42-50):
+Configure SCOPE behavior in `nodes.py`:
 
 ```python
 SCOPEOptimizer(
-    synthesis_mode="thoroughness",  # or "efficiency"
-    max_strategic_rules_per_domain=15,
-    quality_analysis_frequency=1,  # Analyze every N steps
-    ...
+    synthesis_mode="thoroughness",  # Options: "thoroughness" or "efficiency"
+    max_strategic_rules_per_domain=15,  # Maximum rules per domain
+    quality_analysis_frequency=1,  # Analyze quality every N steps
 )
 ```
 
-See [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) for details.
+See [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) for advanced configuration.
 
 ---
 
@@ -285,32 +272,37 @@ See [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) for details.
 ```
 langchain-evolving-prompt-researcher/
 ├── main.py                    # Research assistant entry point
-├── simple_demo.py             # Simple extraction demo (quick)
-├── compare_scope_impact.py    # Research N-iteration comparison
-├── simple_compare.py          # Simple N-iteration comparison (fast)
-├── nodes.py                   # SCOPE integration (5 agents)
+├── simple_demo.py             # Simple extraction demo
+├── compare_scope_impact.py    # Research comparison tool
+├── simple_compare.py          # Simple comparison tool
+├── nodes.py                   # SCOPE-enabled agent nodes
 ├── source_quality.py          # Source authority scoring
-├── config.py, models.py, prompts.py, graph.py
-├── requirements.txt, setup.sh
+├── graph.py                   # LangGraph workflow
+├── models.py                  # Data models
+├── prompts.py                 # Agent prompts
+├── config.py                  # Configuration
+├── requirements.txt           # Python dependencies
+├── setup.sh                   # Setup script
 │
-├── docs/                      # 📚 Documentation
-│   ├── IMPLEMENTATION_GUIDE.md       # Start here
-│   ├── SCOPE_ARCHITECTURE.md         # Architecture
-│   ├── SOURCE_QUALITY_LEARNING.md    # Source quality
-│   └── PHASE1_IMPLEMENTED.md         # Implementation details
+├── docs/                      # Documentation
+│   ├── IMPLEMENTATION_GUIDE.md
+│   ├── SCOPE_ARCHITECTURE.md
+│   └── flow-graph.png
 │
-├── notebooks/                 # 🎓 Tutorials
-│   └── 01_prompt_evolution_basics.ipynb
+├── notebooks/                 # Interactive tutorials
+│   ├── 01_prompt_evolution_basics.ipynb
+│   ├── 02_research_assistant_with_scope.ipynb
+│   └── scope_data/            # Notebook-generated learning data
 │
-├── scope_data/                # 🧠 Learned rules
-│   ├── strategic_memory/global_rules.json
-│   └── prompt_updates/*.jsonl
+├── scope_data/                # Main learned rules (created on first run)
+│   ├── strategic_memory/
+│   └── prompt_updates/
 │
-└── comparison_outputs/        # 📊 Test results
+└── comparison_outputs/        # Generated test results
     ├── results_summary.md
     ├── COMPLETE_REPORT_ANALYSIS.md
-    ├── reports/report_iter_*.txt
-    └── rules_snapshots/rules_iter_*.json
+    ├── reports/
+    └── rules_snapshots/
 ```
 
 ---
@@ -319,33 +311,32 @@ langchain-evolving-prompt-researcher/
 
 ### SCOPE not learning
 
-**Check:**
-```bash
-# 1. SCOPE enabled?
-grep ENABLE_SCOPE .env
-
-# 2. Directory exists?
-ls scope_data/strategic_memory/
-
-# 3. View logs for learning messages
-# Look for: 📚 SCOPE learned
+Check that SCOPE is enabled in `config.py`:
+```python
+ENABLE_SCOPE = True
 ```
 
-### Low source quality
+Verify the learning directory exists:
+```bash
+ls scope_data/strategic_memory/
+```
 
-**Normal!** SCOPE learns to improve this over iterations:
-- Iteration 1: ~6/10 (blogs + Wikipedia)
-- Iteration 5: ~8/10 (academic sources)
-- Iteration 10: ~8.5/10 (peer-reviewed journals)
+Look for learning messages in output: `📚 SCOPE learned`
+
+### Low source quality scores
+
+This is normal! SCOPE learns to improve source quality over iterations:
+- **Iteration 1**: ~6/10 (blogs, general websites)
+- **Iteration 5**: ~8/10 (academic sources)
+- **Iteration 10**: ~8.5/10 (peer-reviewed journals)
 
 ### Import errors
 
+Activate the virtual environment and reinstall dependencies:
 ```bash
-source .venv/bin/activate
+source venv/bin/activate
 pip install -r requirements.txt
 ```
-
-See [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) for more troubleshooting.
 
 ---
 
@@ -353,20 +344,32 @@ See [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) for more trou
 
 **Recommended Learning Path:**
 
-1. **Quick demo:** `python simple_demo.py` (~2 min)
-2. **See learning:** `python simple_compare.py --iterations 5` (~10 min)
-3. **Full research:** `python main.py` (~5 min)
-4. **Research comparison:** `python compare_scope_impact.py --iterations 5` (~25 min)
-5. **Explore docs:** Start with [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md)
-6. **Learn interactively:** Check out the Jupyter notebooks
-7. **Use for presentation:** Results in `comparison_outputs/`
+1. **Quick demo:** `python simple_demo.py` (~2 minutes)
+2. **See learning:** `python simple_compare.py --iterations 5` (~10 minutes)
+3. **Full research:** `python main.py` (~5 minutes)
+4. **Research comparison:** `python compare_scope_impact.py --iterations 5` (~25 minutes)
+5. **Explore documentation:** [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) and [`docs/SCOPE_ARCHITECTURE.md`](docs/SCOPE_ARCHITECTURE.md)
+6. **Interactive tutorials:** Jupyter notebooks in [`notebooks/`](notebooks/)
 
 ---
 
 ## 📖 References
 
-- **SCOPE Paper:** [arxiv.org/abs/2512.15374](https://arxiv.org/abs/2512.15374)
-- **SCOPE GitHub:** [github.com/JarvisPei/SCOPE](https://github.com/JarvisPei/SCOPE)
+### SCOPE Framework
+- **SCOPE GitHub Repository:** [github.com/JarvisPei/SCOPE](https://github.com/JarvisPei/SCOPE)
+- **SCOPE Paper:** Pei, Z., et al. (2024). SCOPE: Prompt Evolution for Enhancing Agent Effectiveness. [arXiv:2512.15374](https://arxiv.org/abs/2512.15374)
+
+### Related Research on Agentic AI
+- Jiang, P., et al. (2025). Adaptation of Agentic AI. [arXiv:2512.16301](https://arxiv.org/abs/2512.16301)
+- Fang, J., et al. (2025). A Comprehensive Survey of Self-Evolving AI Agents: A New Paradigm Bridging Foundation Models and Lifelong Agentic Systems. [arXiv:2508.07407](https://arxiv.org/abs/2508.07407)
+- Liu, S., et al. (2025). Adaptive and Resource-efficient Agentic AI Systems for Mobile and Embedded Devices: A Survey. [arXiv:2510.00078](https://arxiv.org/abs/2510.00078)
+- Gao, H.-a., et al. (2025). A Survey of Self-Evolving Agents: On Path to Artificial Super Intelligence. [arXiv:2507.21046](https://arxiv.org/abs/2507.21046)
+- Anonymous. (2025). Agentic AI: A Comprehensive Survey of Architectures, Applications, and Future Directions. [arXiv:2510.25445](https://arxiv.org/abs/2510.25445)
+
+### Tutorials and Articles
+- **Prompt Evolution with LangChain and SCOPE:** [medium.com/@dogukanucak94/prompt-evolution-with-langchain-and-scope-85c86246584e](https://medium.com/@dogukanucak94/prompt-evolution-with-langchain-and-scope-85c86246584e)
+
+### Frameworks
 - **LangGraph:** [langchain.com/langgraph](https://www.langchain.com/langgraph)
 - **LangChain:** [langchain.com](https://www.langchain.com/)
 
@@ -374,13 +377,14 @@ See [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) for more trou
 
 ## 🤝 Contributing
 
-Contributions welcome! See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Contributions are welcome! Please see [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines.
 
-**Ideas:**
-- Add more SCOPE agents (Phase 2)
-- Improve source quality detection
-- Add domain-specific rules
-- Enhance visualization
+**Areas for improvement:**
+- Additional SCOPE-enabled agents
+- Enhanced source quality detection
+- Domain-specific learning rules
+- Visualization and monitoring tools
+- Performance optimizations
 
 ---
 
@@ -398,6 +402,8 @@ MIT License - See [`LICENSE`](LICENSE) file
 
 ---
 
-**Questions?** See [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) or open an issue.
+## Questions or Issues?
 
-**🎉 Happy researching with SCOPE!**
+Check the [documentation](docs/) or open an issue on GitHub.
+
+**Happy researching with SCOPE! 🎉**

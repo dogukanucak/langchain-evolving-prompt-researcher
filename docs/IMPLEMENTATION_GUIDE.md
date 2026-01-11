@@ -8,25 +8,49 @@
 
 ## Quick Start
 
-### Run Research Assistant
+### Option 1: Simple Demo (Recommended First)
 
 ```bash
 cd langchain-evolving-prompt-researcher
-source venv/bin/activate  # or .\venv\Scripts\activate on Windows
-python main.py
+source .venv/bin/activate  # or .\venv\Scripts\activate on Windows
+
+# Quick demo (~2 min)
+python simple_demo.py
+
+# See learning over multiple iterations (~10 min)
+python simple_compare.py --iterations 5
 ```
 
-### Run Comparative Analysis (10 iterations)
+**Why start here:**
+- ✅ Faster iterations (~2 min vs ~5 min)
+- ✅ Clearer learning patterns (simple extraction task)
+- ✅ Perfect for understanding SCOPE fundamentals
+
+### Option 2: Full Research Assistant
 
 ```bash
+# Single run (~5 min)
+python main.py
+
+# Comparative analysis (10 iterations, ~50 min)
 python compare_scope_impact.py --iterations 10 --topic "your research topic"
 ```
 
+**Why use this:**
+- 🎯 Real-world complexity
+- 🎯 Production scenario
+- 🎯 Impressive results
+
 ### View Results
 
+**Simple Demo:**
+- Summary: `comparison_outputs/simple_results_summary.md`
+- Prompts: `comparison_outputs/simple_prompts/`
+
+**Research Assistant:**
 - Reports: `comparison_outputs/reports/`
-- Rules: `scope_data/strategic_memory/global_rules.json`
 - Summary: `comparison_outputs/results_summary.md`
+- Rules: `scope_data/strategic_memory/global_rules.json`
 
 ---
 
@@ -45,6 +69,23 @@ python compare_scope_impact.py --iterations 10 --topic "your research topic"
 **Coverage:** 62.5% of research pipeline (5 out of 8 nodes)
 
 See [`SCOPE_ARCHITECTURE.md`](SCOPE_ARCHITECTURE.md) for detailed diagram.
+
+---
+
+## Demo Comparison
+
+### Simple Demo vs. Research Assistant
+
+| Aspect | Simple Demo | Research Assistant |
+|--------|-------------|-------------------|
+| **Task** | Information extraction | Multi-agent research |
+| **Duration** | ~2 min/iteration | ~5 min/iteration |
+| **Complexity** | Single agent | 5 agents (questions, searches, writing) |
+| **Use Case** | Teaching SCOPE basics | Production example |
+| **Learning Clarity** | Clear, predictable | Complex but realistic |
+| **Best For** | Presentations, learning | Showcasing capabilities |
+
+**Recommendation:** Start with simple demo to understand SCOPE, then show research assistant for "wow factor."
 
 ---
 
@@ -210,7 +251,7 @@ pip install scope-optimizer
 
 **Solution:** Activate virtual environment
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -304,8 +345,10 @@ def write_report(state: ResearchGraphState):
 
 ```
 langchain-evolving-prompt-researcher/
-├── main.py                    # Entry point
-├── compare_scope_impact.py    # Run N iterations and compare
+├── main.py                    # Research assistant entry point
+├── simple_demo.py             # Simple extraction demo (fast)
+├── compare_scope_impact.py    # Research N-iteration comparison
+├── simple_compare.py          # Simple N-iteration comparison (fast)
 ├── nodes.py                   # SCOPE integration (5 nodes)
 ├── source_quality.py          # Source authority scoring
 ├── models.py                  # State definitions
