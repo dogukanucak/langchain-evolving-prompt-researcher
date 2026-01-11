@@ -79,6 +79,23 @@ SCOPE_DATA_PATH=./scope_data
 
 ## 🚀 Quick Start
 
+### 📓 Interactive Notebooks (Recommended for Learning)
+
+The best way to learn about prompt evolution is through our interactive Jupyter notebooks:
+
+```bash
+cd notebooks
+jupyter notebook
+```
+
+**Start with:** `01_prompt_evolution_basics.ipynb`
+
+The notebooks provide:
+- Step-by-step explanations
+- Live demonstrations of SCOPE learning
+- Hands-on exercises
+- Clear visualizations of improvement
+
 ### Two Demo Modes
 
 This project includes **two complementary demos**:
@@ -208,6 +225,10 @@ langchain-evolving-prompt-researcher/
 ├── setup.sh                     # Quick setup script
 ├── CONTRIBUTING.md              # Contribution guidelines
 ├── LICENSE                      # MIT License
+│
+├── notebooks/                   # 📓 Interactive tutorials
+│   ├── README.md                # Notebooks guide
+│   └── 01_prompt_evolution_basics.ipynb  # Introduction tutorial
 │
 ├── main.py                      # Research assistant entry point
 ├── simple_demo.py               # Simple extraction demo
