@@ -36,8 +36,8 @@ chmod +x setup.sh
 ./setup.sh
 
 # Or manually:
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -334,7 +334,7 @@ This is normal! SCOPE learns to improve source quality over iterations:
 
 Activate the virtual environment and reinstall dependencies:
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
