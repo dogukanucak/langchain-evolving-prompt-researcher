@@ -55,9 +55,17 @@ Required keys:
 - `TAVILY_API_KEY` - [Get here](https://tavily.com/)
 - `LANGSMITH_API_KEY` - Optional, for tracing
 
-### 3. Run Research Assistant
+### 3. Run a Demo
 
+**Quick Demo (Recommended First):**
 ```bash
+# Simple extraction demo (~2 min)
+python simple_demo.py
+```
+
+**Full Research Assistant:**
+```bash
+# Research assistant demo (~5 min)
 python main.py
 ```
 
@@ -65,8 +73,18 @@ Enter a topic and watch SCOPE learn! Look for `📚 SCOPE learned` messages.
 
 ### 4. See Learning in Action (Recommended)
 
+**Simple Comparison (Fast):**
 ```bash
-# Run 10 iterations to see quality improvement
+# 5 iterations, ~10 minutes
+python simple_compare.py
+
+# 10 iterations for clear learning curve
+python simple_compare.py --iterations 10
+```
+
+**Research Comparison (Full):**
+```bash
+# 10 iterations to see quality improvement
 python compare_scope_impact.py --iterations 10 --topic "your topic"
 
 # View results
@@ -145,7 +163,36 @@ After 5 iterations:
 
 ## 💡 Example Usage
 
-### Basic Research
+### Quick Demo (Simple Extraction)
+
+```bash
+python simple_demo.py
+```
+
+```
+📝 Task 1/5
+   Instruction: Extract the email address
+   Text: Contact John Doe at john.doe@example.com...
+   
+   ✓ Output: john.doe@example.com
+   
+   📚 SCOPE LEARNED (STRATEGIC):
+      Always validate email format patterns and extract clean addresses...
+
+✅ Completed 5 tasks
+📚 SCOPE learning events: 2
+```
+
+**Comparison (Simple):**
+```bash
+# Quick test (5 iterations, ~10 min)
+python simple_compare.py
+
+# Full test (10 iterations, ~20 min)
+python simple_compare.py --iterations 10
+```
+
+### Full Research Assistant
 
 ```bash
 python main.py
@@ -163,8 +210,7 @@ Analysts: 1
     prompt for comparative examples across disciplines
 ```
 
-### Comparative Analysis
-
+**Comparison (Research):**
 ```bash
 # Quick test (5 iterations, ~25 min)
 python compare_scope_impact.py --iterations 5 --topic "healthy foods"
@@ -238,8 +284,10 @@ See [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) for details.
 
 ```
 langchain-evolving-prompt-researcher/
-├── main.py                    # Entry point
-├── compare_scope_impact.py    # N-iteration comparison tool
+├── main.py                    # Research assistant entry point
+├── simple_demo.py             # Simple extraction demo (quick)
+├── compare_scope_impact.py    # Research N-iteration comparison
+├── simple_compare.py          # Simple N-iteration comparison (fast)
 ├── nodes.py                   # SCOPE integration (5 agents)
 ├── source_quality.py          # Source authority scoring
 ├── config.py, models.py, prompts.py, graph.py
@@ -303,11 +351,15 @@ See [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md) for more trou
 
 ## 🚀 Next Steps
 
-1. **Try it:** `python main.py`
-2. **See learning:** `python compare_scope_impact.py --iterations 10`
-3. **Explore docs:** Start with [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md)
-4. **Learn interactively:** Check out the Jupyter notebooks
-5. **Use for presentation:** Results in `comparison_outputs/`
+**Recommended Learning Path:**
+
+1. **Quick demo:** `python simple_demo.py` (~2 min)
+2. **See learning:** `python simple_compare.py --iterations 5` (~10 min)
+3. **Full research:** `python main.py` (~5 min)
+4. **Research comparison:** `python compare_scope_impact.py --iterations 5` (~25 min)
+5. **Explore docs:** Start with [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md)
+6. **Learn interactively:** Check out the Jupyter notebooks
+7. **Use for presentation:** Results in `comparison_outputs/`
 
 ---
 
